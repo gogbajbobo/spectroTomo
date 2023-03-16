@@ -245,16 +245,60 @@ def show_sliced_maps(im_a, im_b, xlim=None, ylim=None, mask=None, slice_number =
 
     plt.show()
 
+def show_sliced_map(im1, im2, xlim=None, ylim=None, mask=None, slice_number = slice(0, 199)):
+    
+    xlim = xlim or [np.min(im1), np.max(im1)]
+    ylim = ylim or [np.min(im2), np.max(im2)]
+
+    image1 = (im1[slice_number] if mask is None else im1[slice_number][mask[slice_number]]).flatten()
+    image2 = (im2[slice_number] if mask is None else im2[slice_number][mask[slice_number]]).flatten()
+
+    size = image1.size if image1.size < 5000 else 5000
+    rnd_indx = np.random.choice(range(image1.size), size=size, replace=False)
+
+    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+    ax.hist2d(image1, image2, bins=64, norm = LogNorm())
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+
+    plt.show()
+    
 
 
 # %%
-show_sliced_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, [-0.5, 1], [-0.5, 2.5], slice_number = slice(190, 199))
+show_sliced_map(
+    im_alpha_gauss_filtered, 
+    im_beta_gauss_filtered, 
+    [-0.5, 1], [-0.5, 2.5], 
+    slice_number = slice(190, 199)
+)
 
 # %%
-show_sliced_maps(im_alpha_gauss_filtered, im_poly_gauss_filtered, [-0.5, 1], [-0.5, 1], slice_number = slice(190, 199))
+show_sliced_map(
+    im_alpha_gauss_filtered, im_poly_gauss_filtered, 
+    [-0.5, 1], [-0.5, 1], slice_number = slice(190, 199)
+)
 
 # %%
-show_sliced_maps(im_beta_gauss_filtered, im_poly_gauss_filtered, [-0.5, 2.5], [-0.5, 1], slice_number = slice(190, 199))
+show_sliced_map(
+    im_beta_gauss_filtered, im_poly_gauss_filtered, 
+    [-0.5, 2.5], [-0.5, 1], slice_number = slice(190, 199)
+)
+
+# %%
+show_sliced_map(im_alpha, im_beta, [-0.5, 1], [-1.5, 3], slice_number = slice(190, 199))
+
+# %%
+show_sliced_map(
+    im_alpha, im_poly, 
+    [-0.5, 1], [-0.2, 1.2], slice_number = slice(190, 199)
+)
+
+# %%
+show_sliced_map(
+    im_beta, im_poly, 
+    [-1.5, 3], [-0.2, 1.2], slice_number = slice(190, 199)
+)
 
 # %%
 show_sliced_maps(im_alpha_gauss_filtered, im_poly_gauss_filtered, [-0.5, 1], [-0.5, 1], mask=~mask, slice_number = slice(190, 199))
