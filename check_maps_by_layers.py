@@ -245,7 +245,13 @@ def show_sliced_maps(im_a, im_b, xlim=None, ylim=None, mask=None, slice_number =
 
     plt.show()
 
-def show_sliced_map(im1, im2, xlim=None, ylim=None, mask=None, slice_number = slice(0, 199)):
+def show_sliced_map(
+    im1, im2, 
+    xlim=None, ylim=None, 
+    mask=None, 
+    slice_number=slice(0, 199), 
+    x_label=None, y_label=None
+):
     
     xlim = xlim or [np.min(im1), np.max(im1)]
     ylim = ylim or [np.min(im2), np.max(im2)]
@@ -261,6 +267,11 @@ def show_sliced_map(im1, im2, xlim=None, ylim=None, mask=None, slice_number = sl
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
 
+    if x_label:
+        ax.set_xlabel(x_label, fontsize=18)
+    if y_label:
+        ax.set_ylabel(y_label, fontsize=18)
+
     plt.show()
     
 
@@ -269,20 +280,31 @@ def show_sliced_map(im1, im2, xlim=None, ylim=None, mask=None, slice_number = sl
 show_sliced_map(
     im_alpha_gauss_filtered, 
     im_beta_gauss_filtered, 
-    [-0.5, 1], [-0.5, 2.5], 
-    slice_number = slice(190, 199)
+    [-0.5, 4], [-1, 6.5], 
+    mask=mask,
+    #slice_number = slice(190, 199),
+    x_label = 'MoK⍺',
+    y_label = 'MoKβ',
 )
 
 # %%
 show_sliced_map(
     im_alpha_gauss_filtered, im_poly_gauss_filtered, 
-    [-0.5, 1], [-0.5, 1], slice_number = slice(190, 199)
+    [-0.5, 4], [-0.5, 5], 
+    mask=mask,
+    # slice_number = slice(190, 199),
+    x_label = 'MoK⍺',
+    y_label = 'Polychromatic',
 )
 
 # %%
 show_sliced_map(
     im_beta_gauss_filtered, im_poly_gauss_filtered, 
-    [-0.5, 2.5], [-0.5, 1], slice_number = slice(190, 199)
+    [-1, 6.5], [-0.5, 5], 
+    mask=mask,
+    # slice_number = slice(190, 199),
+    x_label = 'MoKβ',
+    y_label = 'Polychromatic',
 )
 
 # %%
