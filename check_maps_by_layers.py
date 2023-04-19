@@ -53,10 +53,11 @@ print(f'im_beta {im_beta.shape}')
 # %%
 slices_y = slice(30, 110)
 slices_x = slice(30, 110)
+slices_z = slice(50, 300)
 
-im_poly = im_poly[:, slices_y, slices_x]
-im_alpha = im_alpha[:, slices_y, slices_x]
-im_beta = im_beta[:, slices_y, slices_x]
+im_poly = im_poly[slices_z, slices_y, slices_x]
+im_alpha = im_alpha[slices_z, slices_y, slices_x]
+im_beta = im_beta[slices_z, slices_y, slices_x]
 
 print(f'im_poly sliced {im_poly.shape}')
 print(f'im_alpha sliced {im_alpha.shape}')
@@ -70,7 +71,7 @@ def show_hor_slices(im_array):
     fig, ax = plt.subplots(1, 3, figsize=(15, 5))
     for i, axis in enumerate(ax):
         # index = 50 if i == 0 else 100 if i == 1 else 150 
-        index = 75 if i == 0 else 150 if i == 1 else 225 
+        index = 100 if i == 0 else 175 if i == 1 else 225 
         im = axis.imshow(im_array[index, :, :], vmin=vmin, vmax=vmax)
         # im = axis.imshow(im_array[index, :, :])
         plt.colorbar(im, ax=axis)
@@ -151,7 +152,7 @@ fig, ax = filters.try_all_threshold(im_poly[50])
 plt.show()
 
 # %%
-thresh = filters.threshold_minimum(im_poly[275])
+thresh = filters.threshold_minimum(im_poly[225])
 print('threshold_minimum', thresh)
 
 mask = np.full(im_poly_gauss_filtered.shape, False)
@@ -159,12 +160,12 @@ mask = np.full(im_poly_gauss_filtered.shape, False)
 thresh = 0.15
 print('pores/begenat thresh', thresh)
 
-mask[200:] = im_poly_gauss_filtered[200:] > thresh
+mask[150:] = im_poly_gauss_filtered[150:] > thresh
 
 thresh = 0.15
 print('pores/NaCl thresh', thresh)
 
-mask[:200] = im_poly_gauss_filtered[:200] > thresh
+mask[:150] = im_poly_gauss_filtered[:150] > thresh
 
 show_hor_slices(im_poly)
 show_hor_slices(mask)
@@ -173,7 +174,10 @@ show_vert_slices(mask)
 
 # %%
 mask_pores = ~mask
+
+show_hor_slices(im_poly)
 show_hor_slices(mask_pores)
+show_vert_slices(im_poly)
 show_vert_slices(mask_pores)
 
 # %%
@@ -182,9 +186,9 @@ print(thresh_begenat)
 
 mask_begenat = (im_poly_gauss_filtered < thresh_begenat) & ~mask_pores
 
-# show_hor_slices(im_poly)
+show_hor_slices(im_poly)
 show_hor_slices(mask_begenat)
-# show_vert_slices(im_poly)
+show_vert_slices(im_poly)
 show_vert_slices(mask_begenat)
 
 # %%
@@ -193,9 +197,9 @@ print(thresh_NaCl)
 
 mask_NaCl = (im_poly_gauss_filtered < thresh_NaCl) & ~mask_pores & ~mask_begenat
 
-# show_hor_slices(im_poly)
+show_hor_slices(im_poly)
 show_hor_slices(mask_NaCl)
-# show_vert_slices(im_poly)
+show_vert_slices(im_poly)
 show_vert_slices(mask_NaCl)
 
 # %%
@@ -204,9 +208,9 @@ print(thresh_LiNbO3)
 
 mask_LiNbO3 = (im_poly_gauss_filtered < thresh_LiNbO3) & ~mask_pores & ~mask_begenat & ~mask_NaCl
 
-# show_hor_slices(im_poly)
+show_hor_slices(im_poly)
 show_hor_slices(mask_LiNbO3)
-# show_vert_slices(im_poly)
+show_vert_slices(im_poly)
 show_vert_slices(mask_LiNbO3)
 
 # %%
@@ -371,6 +375,7 @@ def show_all_maps(
     h, xedges, yedges, _ = ax[0].hist2d(_im_a, _im_b, bins=bins, norm = LogNorm())
     ab_max_index = np.unravel_index(np.argmax(h), h.shape)
     print('ab max index', xedges[ab_max_index[0]], yedges[ab_max_index[1]])
+    # ax[0].axline((0, 0), (xedges[ab_max_index[0]], yedges[ab_max_index[1]]), linewidth=2, color='r')
     # ax[0].hist2d(_im_a, _im_b, bins=bins)
     ax[0].set_xlim(a_lim)
     ax[0].set_ylim(b_lim)
@@ -401,16 +406,32 @@ def show_all_maps(
     ax[2].set_xlabel('MoKβ', fontsize=36)
     ax[2].set_ylabel('Ploy', fontsize=36)
     
-    plt.show()
+    # plt.show()
+    return ax
 
 
 
 # %%
-show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered)
-show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_pores)
-show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_begenat)
-show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_NaCl)
-show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_LiNbO3)
+ax = show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered)
+
+ax[0].axline((0, 0), (0.194, 0.147), linewidth=2, color='r')
+ax[1].axline((0, 0), (0.194, 0.285), linewidth=2, color='r')
+ax[2].axline((0, 0), (0.147, 0.285), linewidth=2, color='r')
+
+ax[0].axline((0, 0), (0.885, 0.740), linewidth=2, color='b')
+ax[1].axline((0, 0), (0.885, 1.045), linewidth=2, color='b')
+ax[2].axline((0, 0), (0.740, 1.045), linewidth=2, color='b')
+
+ax[0].axline((0, 0), (1.733, 4.587), linewidth=2, color='lightgrey')
+ax[1].axline((0, 0), (1.733, 2.130), linewidth=2, color='lightgrey')
+ax[2].axline((0, 0), (4.587, 2.130), linewidth=2, color='lightgrey')
+
+# show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_pores)
+# show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_begenat)
+# show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_NaCl)
+# show_all_maps(im_alpha_gauss_filtered, im_beta_gauss_filtered, im_poly_gauss_filtered, mask=mask_LiNbO3)
+
+plt.show()
 
 # %%
 data = {
