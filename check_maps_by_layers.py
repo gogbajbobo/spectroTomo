@@ -25,22 +25,22 @@ from sklearn.model_selection import GridSearchCV, ShuffleSplit
 from sklearn import preprocessing, mixture
 
 # %%
-# z_size, y_size, x_size = 199, 153, 153
-z_size, y_size, x_size = 301, 150, 150
+z_size, y_size, x_size = 199, 153, 153
+# z_size, y_size, x_size = 301, 150, 150
 im_poly = np.empty((z_size, y_size, x_size))
 im_alpha = np.empty((z_size, y_size, x_size))
 im_beta = np.empty((z_size, y_size, x_size))
 
 for i in np.arange(z_size):
 
-    spec_tomo_path = '/Users/grimax/Documents/Science/xtomo/spectroTomo/'
-    poly_path = f'{spec_tomo_path}rec_spectral_bragg_mar2023/2023_03_27-29_res/log_poly_fix/rec_poly_{i:03}.tif'
-    alpha_path = f'{spec_tomo_path}rec_spectral_bragg_mar2023/2023_03_27-29_res/log_k-alpha_fix/rec_alpha_{i:03}.tif'
-    beta_path = f'{spec_tomo_path}rec_spectral_bragg_mar2023/2023_03_27-29_res/log_k-beta_fix/rec_beta_{i:03}.tif'
+    # spec_tomo_path = '/Users/grimax/Documents/Science/xtomo/spectroTomo/'
+    # poly_path = f'{spec_tomo_path}rec_spectral_bragg_mar2023/2023_03_27-29_res/log_poly_fix/rec_poly_{i:03}.tif'
+    # alpha_path = f'{spec_tomo_path}rec_spectral_bragg_mar2023/2023_03_27-29_res/log_k-alpha_fix/rec_alpha_{i:03}.tif'
+    # beta_path = f'{spec_tomo_path}rec_spectral_bragg_mar2023/2023_03_27-29_res/log_k-beta_fix/rec_beta_{i:03}.tif'
 
-    # poly_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/Poly_correct/tomo_poly{i:03}.tif'
-    # alpha_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/K-alpha_correct/tomo_k_alpha{i:03}.tif'
-    # beta_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/K-beta_correct/tomo_k_beta{i:03}.tif'
+    poly_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/Poly_correct/tomo_poly{i:03}.tif'
+    alpha_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/K-alpha_correct/tomo_k_alpha{i:03}.tif'
+    beta_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/K-beta_correct/tomo_k_beta{i:03}.tif'
 
     # print(io.imread(poly_path).shape)
     
@@ -57,13 +57,13 @@ slices_y = slice(30, 110)
 slices_x = slice(30, 110)
 slices_z = slice(50, 300)
 
-im_poly = im_poly[slices_z, slices_y, slices_x]
-im_alpha = im_alpha[slices_z, slices_y, slices_x]
-im_beta = im_beta[slices_z, slices_y, slices_x]
+# im_poly = im_poly[slices_z, slices_y, slices_x]
+# im_alpha = im_alpha[slices_z, slices_y, slices_x]
+# im_beta = im_beta[slices_z, slices_y, slices_x]
 
-# im_poly = im_poly[:, slices_y, slices_x]
-# im_alpha = im_alpha[:, slices_y, slices_x]
-# im_beta = im_beta[:, slices_y, slices_x]
+im_poly = im_poly[:, slices_y, slices_x]
+im_alpha = im_alpha[:, slices_y, slices_x]
+im_beta = im_beta[:, slices_y, slices_x]
 
 print(f'im_poly sliced {im_poly.shape}')
 print(f'im_alpha sliced {im_alpha.shape}')
@@ -76,8 +76,8 @@ def show_hor_slices(im_array):
     vmax = np.max(im_array)
     fig, ax = plt.subplots(1, 3, figsize=(15, 5))
     for i, axis in enumerate(ax):
-        # index = 50 if i == 0 else 100 if i == 1 else 150 
-        index = 100 if i == 0 else 175 if i == 1 else 225 
+        index = 50 if i == 0 else 100 if i == 1 else 150 
+        # index = 100 if i == 0 else 175 if i == 1 else 225 
         im = axis.imshow(im_array[index, :, :], vmin=vmin, vmax=vmax)
         # im = axis.imshow(im_array[index, :, :])
         plt.colorbar(im, ax=axis)
@@ -158,24 +158,25 @@ fig, ax = filters.try_all_threshold(im_poly[50])
 plt.show()
 
 # %%
-thresh = filters.threshold_minimum(im_poly[225])
+# thresh = filters.threshold_minimum(im_poly[225])
+thresh = filters.threshold_minimum(im_poly[50])
 print('threshold_minimum', thresh)
 
+thresh = 0.15
+
+mask = im_poly_gauss_filtered > thresh
+
+# mask = np.full(im_poly_gauss_filtered.shape, False)
+
 # thresh = 0.15
+# print('pores/begenat thresh', thresh)
 
-# mask = im_poly_gauss_filtered > thresh
+# mask[150:] = im_poly_gauss_filtered[150:] > thresh
 
-mask = np.full(im_poly_gauss_filtered.shape, False)
+# thresh = 0.15
+# print('pores/NaCl thresh', thresh)
 
-thresh = 0.15
-print('pores/begenat thresh', thresh)
-
-mask[150:] = im_poly_gauss_filtered[150:] > thresh
-
-thresh = 0.15
-print('pores/NaCl thresh', thresh)
-
-mask[:150] = im_poly_gauss_filtered[:150] > thresh
+# mask[:150] = im_poly_gauss_filtered[:150] > thresh
 
 show_hor_slices(im_poly)
 show_hor_slices(mask)
@@ -456,13 +457,14 @@ df.describe()
 
 # %%
 train_data = np.array(df)
-means_init = [
-    [0, 0, 0],
-    [0.194, 0.147, 0.287],
-    [0.875, 0.739, 1.082],
-    [1.733, 4.586, 2.130],
-]
-clf = mixture.GaussianMixture(n_components=4, covariance_type='full', means_init=means_init)
+# means_init = [
+#     # [0, 0, 0],
+#     [0.194, 0.147, 0.287],
+#     [0.875, 0.739, 1.082],
+#     [1.733, 4.586, 2.130],
+# ]
+# clf = mixture.GaussianMixture(n_components=3, covariance_type='spherical', means_init=means_init)
+clf = mixture.BayesianGaussianMixture(n_components=3, covariance_type='full')
 labels = clf.fit_predict(train_data)
 
 # %%
@@ -490,25 +492,6 @@ sns.pairplot(
     palette={0: 'blue', 1: 'red', 2: 'green', 3: 'lightgray'}, 
     diag_kws={'bins':64}
 )
-
-# %%
-scaler = preprocessing.StandardScaler()
-scaler.fit(df)
-scaled_data = scaler.transform(df)
-
-print(df.describe())
-
-scaled_df = pd.DataFrame(data=scaled_data, columns=['alpha filtered scaled', 'beta filtered scaled', 'poly filtered scaled'])
-scaled_df.describe()
-
-# %%
-clustering = DBSCAN(eps=0.1, min_samples=20).fit(scaled_df)
-labels = clustering.labels_
-n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-print(n_clusters_)
-print(set(labels))
-
-plt.hist(labels, bins=len(set(labels)))
 
 # %%
 
