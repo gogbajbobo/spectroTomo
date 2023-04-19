@@ -26,7 +26,7 @@ from sklearn import preprocessing, mixture
 
 # %%
 # z_size, y_size, x_size = 199, 153, 153
-z_size, y_size, x_size = 300, 150, 150
+z_size, y_size, x_size = 301, 150, 150
 im_poly = np.empty((z_size, y_size, x_size))
 im_alpha = np.empty((z_size, y_size, x_size))
 im_beta = np.empty((z_size, y_size, x_size))
@@ -42,6 +42,8 @@ for i in np.arange(z_size):
     # alpha_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/K-alpha_correct/tomo_k_alpha{i:03}.tif'
     # beta_path = f'/Users/grimax/Documents/Science/xtomo/spectroTomo/Spectral_tomo_data/K-beta_correct/tomo_k_beta{i:03}.tif'
 
+    # print(io.imread(poly_path).shape)
+    
     im_poly[i, :, :] = io.imread(poly_path)
     im_alpha[i, :, :] = io.imread(alpha_path)
     im_beta[i, :, :] = io.imread(beta_path)
@@ -58,6 +60,10 @@ slices_z = slice(50, 300)
 im_poly = im_poly[slices_z, slices_y, slices_x]
 im_alpha = im_alpha[slices_z, slices_y, slices_x]
 im_beta = im_beta[slices_z, slices_y, slices_x]
+
+# im_poly = im_poly[:, slices_y, slices_x]
+# im_alpha = im_alpha[:, slices_y, slices_x]
+# im_beta = im_beta[:, slices_y, slices_x]
 
 print(f'im_poly sliced {im_poly.shape}')
 print(f'im_alpha sliced {im_alpha.shape}')
@@ -154,6 +160,10 @@ plt.show()
 # %%
 thresh = filters.threshold_minimum(im_poly[225])
 print('threshold_minimum', thresh)
+
+# thresh = 0.15
+
+# mask = im_poly_gauss_filtered > thresh
 
 mask = np.full(im_poly_gauss_filtered.shape, False)
 
