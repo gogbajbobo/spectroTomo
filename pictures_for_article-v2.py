@@ -78,21 +78,24 @@ def show_hor_slices(im_array):
     plt.show()
     
     
-def show_vert_slices(im_array, vmax=None):
-    vmin = np.min(im_array)
+def show_vert_slices(im_array, vmin=None, vmax=None, z_slice=None, y_slice=None, x_slice=None):
+    vmin = vmin or np.min(im_array)
     vmax = vmax or np.max(im_array)
     fig, ax = plt.subplots(1, 3, figsize=(15, 5))
     z_size, y_size, x_size = im_array.shape
+    z_slice = z_slice or z_size//2
+    y_slice = y_slice or y_size//2
+    x_slice = x_slice or x_size//2
     for i, axis in enumerate(ax):
         if i == 0:
-            im = axis.imshow(im_array[z_size//2, :, :], vmin=vmin, vmax=vmax)
-            # im = axis.imshow(im_array[z_size//2, :, :])
+            im = axis.imshow(im_array[z_slice, :, :], vmin=vmin, vmax=vmax)
+            # im = axis.imshow(im_array[z_slice, :, :])
         elif i == 1:
-            im = axis.imshow(im_array[:, y_size//2, :], vmin=vmin, vmax=vmax)
-            # im = axis.imshow(im_array[:, y_size//2, :])
+            im = axis.imshow(im_array[:, y_slice, :], vmin=vmin, vmax=vmax)
+            # im = axis.imshow(im_array[:, y_slice, :])
         elif i == 2:
-            im = axis.imshow(im_array[:, :, x_size//2], vmin=vmin, vmax=vmax)
-            # im = axis.imshow(im_array[:, :, x_size//2])
+            im = axis.imshow(im_array[:, :, x_slice], vmin=vmin, vmax=vmax)
+            # im = axis.imshow(im_array[:, :, x_slice])
         plt.colorbar(im, ax=axis)
     plt.show()
     
@@ -110,8 +113,8 @@ show_vert_slices(im_poly_1)
 
 # %%
 # h_0_slice = 15
-# h_0_slice = 125
-h_0_slice = 145
+h_0_slice = 120
+# h_0_slice = 145
 # h_0_slice = 170
 h_1_slice = h_0_slice + 70
 
@@ -137,28 +140,59 @@ im_poly_gf_1 = np.rot90(filter_im_array(im_poly_1, sigma=sigma), axes=(1, 2))
 im_alpha_gf_1 = np.rot90(filter_im_array(im_alpha_1, sigma=sigma), axes=(1, 2))
 im_beta_gf_1 = np.rot90(filter_im_array(im_beta_1, sigma=sigma), axes=(1, 2))
 
-vmin, vmax = 0, 1
+vmin, vmax = 0, 4
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-im_00 = axes[0, 0].imshow(im_poly_gf_0[h_0_slice, 10:140, 15:145])
-im_01 = axes[0, 1].imshow(im_alpha_gf_0[h_0_slice, 10:140, 15:145])
-im_02 = axes[0, 2].imshow(im_beta_gf_0[h_0_slice, 10:140, 15:145])
+columns = ['Poly', 'MoK⍺', 'MoKβ']
+rows = ['a', 'b']
+
+for col, axis in enumerate(axes[0]):
+    axis.set_title(columns[col], pad=32)
+
+for row, axis in enumerate(axes[:,0]):
+    axis.set_ylabel(rows[row], rotation=0, size='large', labelpad=16)
+
+im_00 = axes[0, 0].imshow(im_poly_gf_0[h_0_slice, 10:140, 15:145], vmin=vmin, vmax=vmax)
+im_01 = axes[0, 1].imshow(im_alpha_gf_0[h_0_slice, 10:140, 15:145], vmin=vmin, vmax=vmax)
+im_02 = axes[0, 2].imshow(im_beta_gf_0[h_0_slice, 10:140, 15:145], vmin=vmin, vmax=vmax)
 plt.colorbar(im_00, ax=axes[0, 0])
 plt.colorbar(im_01, ax=axes[0, 1])
 plt.colorbar(im_02, ax=axes[0, 2])
 
-im_10 = axes[1, 0].imshow(im_poly_gf_1[h_1_slice, 7:137, 2:132])
-im_11 = axes[1, 1].imshow(im_alpha_gf_1[h_1_slice, 7:137, 3:133])
-im_12 = axes[1, 2].imshow(im_beta_gf_1[h_1_slice, 8:138, 9:139])
-# im_10 = axes[1, 0].imshow(im_poly_gf_1[h_1_slice, 70:90, 25:50])
-# im_11 = axes[1, 1].imshow(im_alpha_gf_1[h_1_slice, 70:90, 26:51])
-# im_12 = axes[1, 2].imshow(im_beta_gf_1[h_1_slice, 71:91, 32:57])
+im_10 = axes[1, 0].imshow(im_poly_gf_0[:, 10:140, 80], vmin=vmin, vmax=vmax)
+im_11 = axes[1, 1].imshow(im_alpha_gf_0[:, 10:140, 80], vmin=vmin, vmax=vmax)
+im_12 = axes[1, 2].imshow(im_beta_gf_0[:, 10:140, 80], vmin=vmin, vmax=vmax)
 plt.colorbar(im_10, ax=axes[1, 0])
 plt.colorbar(im_11, ax=axes[1, 1])
 plt.colorbar(im_12, ax=axes[1, 2])
 
 plt.show()
+
+# fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+# im_00 = axes[0].imshow(im_poly_gf_0[:, 10:140, 65], vmin=vmin, vmax=vmax)
+# im_01 = axes[1].imshow(im_alpha_gf_0[:, 10:140, 65], vmin=vmin, vmax=vmax)
+# im_02 = axes[2].imshow(im_beta_gf_0[:, 10:140, 65], vmin=vmin, vmax=vmax)
+# plt.colorbar(im_00, ax=axes[0])
+# plt.colorbar(im_01, ax=axes[1])
+# plt.colorbar(im_02, ax=axes[2])
+
+# plt.show()
+
+# fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+# im_10 = axes[0].imshow(im_poly_gf_1[h_1_slice, 7:137, 2:132])
+# im_11 = axes[1].imshow(im_alpha_gf_1[h_1_slice, 7:137, 3:133])
+# im_12 = axes[2].imshow(im_beta_gf_1[h_1_slice, 8:138, 9:139])
+# # im_10 = axes[0].imshow(im_poly_gf_1[h_1_slice, 70:90, 25:50])
+# # im_11 = axes[1].imshow(im_alpha_gf_1[h_1_slice, 70:90, 26:51])
+# # im_12 = axes[2].imshow(im_beta_gf_1[h_1_slice, 71:91, 32:57])
+# plt.colorbar(im_10, ax=axes[0])
+# plt.colorbar(im_11, ax=axes[1])
+# plt.colorbar(im_12, ax=axes[2])
+
+# plt.show()
 
 
 # %%
@@ -205,9 +239,12 @@ print(f'im_poly sliced 1 {im_poly_sliced_1.shape}')
 print(f'im_alpha sliced 1 {im_alpha_sliced_1.shape}')
 print(f'im_beta sliced 1 {im_beta_sliced_1.shape}')
 
-show_vert_slices(im_poly_sliced_0)
-show_vert_slices(im_poly_sliced_1)
 
+# %%
+show_vert_slices(im_poly_sliced_0, y_slice=50, x_slice=50, vmin=0, vmax=4)
+show_vert_slices(im_alpha_sliced_0, y_slice=50, x_slice=50, vmin=0, vmax=4)
+show_vert_slices(im_beta_sliced_0, y_slice=50, x_slice=50, vmin=0, vmax=4)
+# show_vert_slices(im_poly_sliced_1, y_slice=50, x_slice=50, vmax=3)
 
 # %%
 im_poly_gf_0 = np.copy(im_poly_sliced_0)
@@ -220,9 +257,9 @@ im_beta_gf_1 = np.copy(im_beta_sliced_1)
 
 fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 axes[0, 0].imshow(im_poly_gf_0[145, :, :])
-axes[0, 1].imshow(im_poly_gf_0[:, :, 35])
+axes[0, 1].imshow(im_poly_gf_0[:, :, 50])
 axes[1, 0].imshow(im_poly_gf_1[145, :, :])
-axes[1, 1].imshow(im_poly_gf_1[:, :, 35])
+axes[1, 1].imshow(im_poly_gf_1[:, :, 50])
 plt.show()
 
 
@@ -293,9 +330,9 @@ show_all_maps(im_alpha_gf_1, im_beta_gf_1, im_poly_gf_1, a_lim=a_lim, b_lim=b_li
 
 # %%
 data_0 = {
-    'alpha': im_alpha_gf_0.flatten(), 
-    'beta': im_beta_gf_0.flatten(), 
-    'poly': im_poly_gf_0.flatten(),
+    'MoKα': im_alpha_gf_0.flatten(), 
+    'MoKβ': im_beta_gf_0.flatten(), 
+    'Poly': im_poly_gf_0.flatten(),
 }
 df_0 = pd.DataFrame(data=data_0)
 df_0.describe()
@@ -332,7 +369,7 @@ g.map_diag(sns.histplot)
 # g.map_offdiag(sns.scatterplot, marker='.')
 g.map_lower(sns.scatterplot, marker='.')
 # g.map_upper(hide_current_axis)
-g.fig.legend(handles=g._legend_data.values(), labels=['NaCl', 'LiNbO3', 'Ag begenat'], bbox_to_anchor=(.85, .75))
+g.fig.legend(handles=g._legend_data.values(), labels=['Ag begenat', 'LiNbO3', 'NaCl'], bbox_to_anchor=(.85, .75))
 
 
 # %%
@@ -342,9 +379,9 @@ g.fig.legend(handles=g._legend_data.values(), labels=['NaCl', 'LiNbO3', 'Ag bege
 #     'poly': im_poly_gf_1[:199, :, :].flatten(),
 # }
 data_1 = {
-    'alpha': im_alpha_gf_1.flatten(), 
-    'beta': im_beta_gf_1.flatten(), 
-    'poly': im_poly_gf_1.flatten(),
+    'MoKα': im_alpha_gf_1.flatten(), 
+    'MoKβ': im_beta_gf_1.flatten(), 
+    'Poly': im_poly_gf_1.flatten(),
 }
 df_1 = pd.DataFrame(data=data_1)
 df_1.describe()
@@ -362,11 +399,13 @@ df_1['labels'] = labels_1
 df_1.describe()
 
 # %%
-rnd_indx = np.random.choice(range(df_1[['alpha']].size), size=10000, replace=False)
+rnd_indx = np.random.choice(range(labels_1.size), size=10000, replace=False)
 part_df_1 = df_1.iloc[rnd_indx]
 part_df_1.describe()
 
 # %%
+part_df_1['labels'] = part_df_1['labels'].map(lambda x: 0 if x == 2 else 1 if x == 0 else 2)
+
 g = sns.PairGrid(
     part_df_1, 
     hue='labels',
@@ -375,7 +414,12 @@ g = sns.PairGrid(
 )
 g.map_diag(sns.histplot)
 g.map_offdiag(sns.scatterplot, marker='.')
-g.fig.legend(handles=g._legend_data.values(), labels=['NaCl', 'LiNbO3', 'Ag begenat'], bbox_to_anchor=(.85, .75))
+g.fig.legend(
+    handles=g._legend_data.values(), 
+    labels=['Ag begenat', 'LiNbO3', 'NaCl'], 
+    bbox_to_anchor=(.85, .75),
+)
+
 
 
 # %%
@@ -406,15 +450,15 @@ plt.show()
 # %%
 fig, ax = plt.subplots(2, 2, figsize=(7, 10))
 
-im = ax[0, 0].imshow(im_poly_gf_0[:, :, 35], vmin=0, vmax=2.5)
-# im = ax[0, 0].imshow(im_poly_gf_0[:, :, 35])
+im = ax[0, 0].imshow(im_poly_gf_0[:, :, 40], vmin=0, vmax=2.5)
+# im = ax[0, 0].imshow(im_poly_gf_0[:, :, 40])
 plt.colorbar(im, ax=ax[0, 0])
-ax[0, 1].imshow(im_colors_0[:, :, 35])
+ax[0, 1].imshow(im_colors_0[:, :, 40])
 
-im = ax[1, 0].imshow(im_poly_gf_0[:, 35, :], vmin=0, vmax=2.5)
-# im = ax[1, 0].imshow(im_poly_gf_0[:, 35, :])
+im = ax[1, 0].imshow(im_poly_gf_0[:, 40, :], vmin=0, vmax=2.5)
+# im = ax[1, 0].imshow(im_poly_gf_0[:, 40, :])
 plt.colorbar(im, ax=ax[1, 0])
-ax[1, 1].imshow(im_colors_0[:, 35, :])
+ax[1, 1].imshow(im_colors_0[:, 40, :])
 
 plt.show()
 
@@ -441,18 +485,114 @@ plt.show()
 # %%
 fig, ax = plt.subplots(2, 2, figsize=(7, 10))
 
-# im = ax[0, 0].imshow(im_poly_gf_1[:, :, 35], vmin=image.min(), vmax=image.max())
-im = ax[0, 0].imshow(im_poly_gf_1[:, :, 35])
+# im = ax[0, 0].imshow(im_poly_gf_1[:, :, 40], vmin=image.min(), vmax=image.max())
+im = ax[0, 0].imshow(im_poly_gf_1[:, :, 40])
 plt.colorbar(im, ax=ax[0, 0])
-ax[0, 1].imshow(im_colors_1[:, :, 35])
+ax[0, 1].imshow(im_colors_1[:, :, 40])
 
-# im = ax[1, 0].imshow(im_poly_gf_1[:, 35, :], vmin=image.min(), vmax=image.max())
-im = ax[1, 0].imshow(im_poly_gf_1[:, 35, :])
+# im = ax[1, 0].imshow(im_poly_gf_1[:, 40, :], vmin=image.min(), vmax=image.max())
+im = ax[1, 0].imshow(im_poly_gf_1[:, 40, :])
 plt.colorbar(im, ax=ax[1, 0])
-ax[1, 1].imshow(im_colors_1[:, 35, :])
+ax[1, 1].imshow(im_colors_1[:, 40, :])
 
 plt.show()
 
 # %%
+thresh = filters.threshold_otsu(im_poly_gf_0[190])
+print(thresh)
+
+local_thresh = filters.threshold_local(im_poly_gf_0, 51)
+
+
+plt.imshow(im_poly_gf_0[50, :, :])
+plt.show()
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow((im_poly_gf_0 > local_thresh)[50, :, :])
+ax[1].imshow(im_poly_gf_0[50, :, :] > thresh)
+plt.show()
+
+plt.imshow(im_poly_gf_0[125, :, :])
+plt.show()
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow((im_poly_gf_0 > local_thresh)[125, :, :])
+ax[1].imshow(im_poly_gf_0[125, :, :] > thresh)
+plt.show()
+
+plt.imshow(im_poly_gf_0[175, :, :])
+plt.show()
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow((im_poly_gf_0 > local_thresh)[175, :, :])
+ax[1].imshow(im_poly_gf_0[175, :, :] > thresh)
+plt.show()
+
+plt.imshow(im_poly_gf_0[195, :, :])
+plt.show()
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow((im_poly_gf_0 > local_thresh)[195, :, :])
+ax[1].imshow(im_poly_gf_0[195, :, :] > thresh)
+plt.show()
+
+
+# %%
+mask = im_poly_gf_0 > thresh
+# mask = im_poly_gf_0 > local_thresh
+# mask = im_poly_gf_0 > 0.2
+
+# %%
+poly_colors_0_masked = np.copy(labels_0)
+poly_colors_0_masked[~mask.flatten()] = -1
+
+# %%
+palette = np.array([[  0,   0,   0],
+                    [  0,   0, 255],
+                    [255,   0,   0],
+                    [  0, 255,   0]])
+
+slices = [100, 125, 150, 175]
+
+images = [im_poly_gf_0, im_alpha_gf_0, im_beta_gf_0]
+im_colors_0 = palette[poly_colors_0_masked.astype(np.int16)+1].reshape((*images[0].shape, 3))
+
+fig, ax = plt.subplots(len(slices), 4, figsize=(12, len(slices) * 3))
+
+columns = ['Poly', 'MoK⍺', 'MoKβ', 'Segmented']
+rows = ['I', 'II', 'III', 'IV', 'V', 'VI']
+
+for col, axis in enumerate(ax[0]):
+    axis.set_title(columns[col], pad=32)
+
+for row, axis in enumerate(ax[:,0]):
+    axis.set_ylabel(rows[row], rotation=0, size='large', labelpad=16)
+
+for i, slice_number in enumerate(slices):
+    for j, image in enumerate(images):
+        im = ax[i, j].imshow(image[slice_number], vmin=0, vmax=4)
+        plt.colorbar(im, ax=ax[i, j])
+    im = ax[i, 3].imshow(im_colors_0[slice_number])
+    plt.colorbar(im, ax=ax[i, 3])
+fig.tight_layout()
+plt.show()
+
+# %%
+y_slice_0 = 50
+x_slice_0 = 50
+
+fig, ax = plt.subplots(2, 4, figsize=(14, 10))
+
+for col, axis in enumerate(ax[0]):
+    axis.set_title(columns[col], pad=32)
+
+for row, axis in enumerate(ax[:,0]):
+    axis.set_ylabel(rows[row], rotation=0, size='large', labelpad=16)
+
+for j, image in enumerate(images):
+    im = ax[0, j].imshow(image[:, :, x_slice_0], vmin=0, vmax=4)
+    plt.colorbar(im, ax=ax[0, j])
+    im = ax[1, j].imshow(image[:, y_slice_0, :], vmin=0, vmax=4)
+    plt.colorbar(im, ax=ax[1, j])
+ax[0, 3].imshow(im_colors_0[:, :, x_slice_0])
+ax[1, 3].imshow(im_colors_0[:, y_slice_0, :])
+plt.show()
+
 
 # %%
