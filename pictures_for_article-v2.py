@@ -373,6 +373,62 @@ g.fig.legend(handles=g._legend_data.values(), labels=['Ag begenat', 'LiNbO3', 'N
 
 
 # %%
+def show_all_scatters(
+    scatter_df, 
+    a_lim=None, b_lim=None, p_lim=None, 
+    figsize=(40, 10),
+):
+        
+    a_lim = a_lim or [np.min(im_a), np.max(im_a)]
+    b_lim = b_lim or [np.min(im_b), np.max(im_b)]
+    p_lim = p_lim or [np.min(im_p), np.max(im_p)]
+    
+    fig, ax = plt.subplots(1, 3, figsize=figsize)
+    
+    palette={0: 'blue', 1: 'red', 2: 'green'}
+    hue='labels'
+    marker=','
+    # legend=False
+    legend='auto'
+    
+    sns.scatterplot(scatter_df, x='MoKα', y='MoKβ', hue=hue, palette=palette, marker=marker, legend=legend, ax=ax[0])
+    ax[0].set_xlim(a_lim)
+    ax[0].set_ylim(b_lim)
+    ax[0].grid(True)
+    ax[0].tick_params(labelsize=22)
+    ax[0].set_xlabel('MoK⍺', fontsize=36)
+    ax[0].set_ylabel('MoKβ', fontsize=36)
+
+    sns.scatterplot(scatter_df, x='MoKα', y='Poly', hue=hue, palette=palette, marker=marker, legend=legend, ax=ax[1])
+    ax[1].set_xlim(a_lim)
+    ax[1].set_ylim(p_lim)
+    ax[1].grid(True)
+    ax[1].tick_params(labelsize=22)
+    ax[1].set_xlabel('MoK⍺', fontsize=36)
+    ax[1].set_ylabel('Poly', fontsize=36)
+
+    sns.scatterplot(scatter_df, x='MoKβ', y='Poly', hue=hue, palette=palette, marker=marker, legend=legend, ax=ax[2])
+    ax[2].set_xlim(b_lim)
+    ax[2].set_ylim(p_lim)
+    ax[2].grid(True)
+    ax[2].tick_params(labelsize=22)
+    ax[2].set_xlabel('MoKβ', fontsize=36)
+    ax[2].set_ylabel('Poly', fontsize=36)
+    
+    handles, labels = ax[2].get_legend_handles_labels()
+    fig.legend(handles, ['Ag begenat', 'LiNbO3', 'NaCl'], loc='upper center', ncols=3, fontsize=28, markerscale=3)
+
+    ax[0].get_legend().remove()
+    ax[1].get_legend().remove()
+    ax[2].get_legend().remove()
+    
+    plt.show()
+
+
+# %%
+show_all_scatters(part_df_0, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim)
+
+# %%
 # data_1 = {
 #     'alpha': im_alpha_gf_1[:199, :, :].flatten(), 
 #     'beta': im_beta_gf_1[:199, :, :].flatten(), 
@@ -421,6 +477,9 @@ g.fig.legend(
 )
 
 
+
+# %%
+show_all_scatters(part_df_1, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim)
 
 # %%
 poly_colors_0 = np.copy(labels_0)
