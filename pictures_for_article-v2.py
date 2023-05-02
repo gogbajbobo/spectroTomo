@@ -169,30 +169,36 @@ plt.colorbar(im_12, ax=axes[1, 2])
 
 plt.show()
 
-# fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
-# im_00 = axes[0].imshow(im_poly_gf_0[:, 10:140, 65], vmin=vmin, vmax=vmax)
-# im_01 = axes[1].imshow(im_alpha_gf_0[:, 10:140, 65], vmin=vmin, vmax=vmax)
-# im_02 = axes[2].imshow(im_beta_gf_0[:, 10:140, 65], vmin=vmin, vmax=vmax)
-# plt.colorbar(im_00, ax=axes[0])
-# plt.colorbar(im_01, ax=axes[1])
-# plt.colorbar(im_02, ax=axes[2])
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-# plt.show()
+columns = ['Poly', 'MoK⍺', 'MoKβ']
+rows = ['a', 'b']
 
-# fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+for col, axis in enumerate(axes[0]):
+    axis.set_title(columns[col], pad=32)
 
-# im_10 = axes[0].imshow(im_poly_gf_1[h_1_slice, 7:137, 2:132])
-# im_11 = axes[1].imshow(im_alpha_gf_1[h_1_slice, 7:137, 3:133])
-# im_12 = axes[2].imshow(im_beta_gf_1[h_1_slice, 8:138, 9:139])
-# # im_10 = axes[0].imshow(im_poly_gf_1[h_1_slice, 70:90, 25:50])
-# # im_11 = axes[1].imshow(im_alpha_gf_1[h_1_slice, 70:90, 26:51])
-# # im_12 = axes[2].imshow(im_beta_gf_1[h_1_slice, 71:91, 32:57])
-# plt.colorbar(im_10, ax=axes[0])
-# plt.colorbar(im_11, ax=axes[1])
-# plt.colorbar(im_12, ax=axes[2])
+for row, axis in enumerate(axes[:,0]):
+    axis.set_ylabel(rows[row], rotation=0, size='large', labelpad=16)
 
-# plt.show()
+vmin, vmax = 0, 4
+im_00 = axes[0, 0].imshow(im_poly_gf_1[h_1_slice, 7:137, 2:132], vmin=vmin, vmax=vmax)
+im_01 = axes[0, 1].imshow(im_alpha_gf_1[h_1_slice, 7:137, 3:133], vmin=vmin, vmax=vmax)
+im_02 = axes[0, 2].imshow(im_beta_gf_1[h_1_slice, 8:138, 9:139], vmin=vmin, vmax=vmax)
+plt.colorbar(im_00, ax=axes[0, 0])
+plt.colorbar(im_01, ax=axes[0, 1])
+plt.colorbar(im_02, ax=axes[0, 2])
+
+vmin, vmax = 0, 8
+im_10 = axes[1, 0].imshow(im_poly_gf_1[70:269, 7:137, 80], vmin=vmin, vmax=vmax)
+im_11 = axes[1, 1].imshow(im_alpha_gf_1[70:269, 7:137, 80], vmin=vmin, vmax=vmax)
+im_12 = axes[1, 2].imshow(im_beta_gf_1[70:269, 8:138, 80], vmin=vmin, vmax=vmax)
+plt.colorbar(im_10, ax=axes[1, 0])
+plt.colorbar(im_11, ax=axes[1, 1])
+plt.colorbar(im_12, ax=axes[1, 2])
+
+plt.show()
+
 
 
 # %%
