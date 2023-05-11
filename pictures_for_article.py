@@ -188,9 +188,9 @@ im_beta_gf_1 = filter_im_array(im_beta_sliced_1, sigma=sigma)
 
 fig, axes = plt.subplots(2, 2, figsize=(10, 10))
 axes[0, 0].imshow(im_poly_gf_0[145, :, :])
-axes[0, 1].imshow(im_poly_gf_0[:, :, 35])
+axes[0, 1].imshow(im_poly_gf_0[:, :, 50])
 axes[1, 0].imshow(im_poly_gf_1[145, :, :])
-axes[1, 1].imshow(im_poly_gf_1[:, :, 35])
+axes[1, 1].imshow(im_poly_gf_1[:, :, 50])
 plt.show()
 
 
