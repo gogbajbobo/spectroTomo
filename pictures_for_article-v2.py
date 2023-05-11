@@ -140,11 +140,16 @@ im_poly_gf_1 = np.rot90(filter_im_array(im_poly_1, sigma=sigma), axes=(1, 2))
 im_alpha_gf_1 = np.rot90(filter_im_array(im_alpha_1, sigma=sigma), axes=(1, 2))
 im_beta_gf_1 = np.rot90(filter_im_array(im_beta_1, sigma=sigma), axes=(1, 2))
 
+
+poly_text = 'Polychromatic'
+moka_text = r'MoK$_\alpha$'
+mokb_text = r'MoK$_\beta$'
+
 vmin, vmax = 0, 4
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-columns = ['Poly', 'MoK⍺', 'MoKβ']
+columns = [poly_text, moka_text, mokb_text]
 rows = ['a', 'b']
 
 for col, axis in enumerate(axes[0]):
@@ -172,7 +177,7 @@ plt.show()
 
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
 
-columns = ['Poly', 'MoK⍺', 'MoKβ']
+columns = [poly_text, moka_text, mokb_text]
 rows = ['a', 'b']
 
 for col, axis in enumerate(axes[0]):
@@ -250,12 +255,15 @@ print(f'im_beta sliced 1 {im_beta_sliced_1.shape}')
 show_vert_slices(im_poly_sliced_0, y_slice=50, x_slice=50, vmin=0, vmax=4)
 show_vert_slices(im_alpha_sliced_0, y_slice=50, x_slice=50, vmin=0, vmax=4)
 show_vert_slices(im_beta_sliced_0, y_slice=50, x_slice=50, vmin=0, vmax=4)
-# show_vert_slices(im_poly_sliced_1, y_slice=50, x_slice=50, vmax=3)
+show_vert_slices(im_poly_sliced_1, y_slice=50, x_slice=50, vmax=3)
 
 # %%
 im_poly_gf_0 = np.copy(im_poly_sliced_0)
 im_alpha_gf_0 = np.copy(im_alpha_sliced_0)
 im_beta_gf_0 = np.copy(im_beta_sliced_0)
+
+print('im_poly_sliced_0', im_poly_sliced_0.shape)
+print('im_poly_gf_0', im_poly_gf_0.shape)
 
 im_poly_gf_1 = np.copy(im_poly_sliced_1)
 im_alpha_gf_1 = np.copy(im_alpha_sliced_1)
@@ -268,8 +276,9 @@ axes[1, 0].imshow(im_poly_gf_1[145, :, :])
 axes[1, 1].imshow(im_poly_gf_1[:, :, 50])
 plt.show()
 
-
 # %%
+attenuation_text = 'Attenuation coefficient'
+
 def show_all_maps(
     im_a, im_b, im_p, 
     a_lim=None, b_lim=None, p_lim=None, 
@@ -278,7 +287,7 @@ def show_all_maps(
     bins=128,
     figsize=(40, 10),
 ):
-        
+            
     a_lim = a_lim or [np.min(im_a), np.max(im_a)]
     b_lim = b_lim or [np.min(im_b), np.max(im_b)]
     p_lim = p_lim or [np.min(im_p), np.max(im_p)]
@@ -297,8 +306,8 @@ def show_all_maps(
     ax[0].set_ylim(b_lim)
     ax[0].grid(True)
     ax[0].tick_params(labelsize=22)
-    ax[0].set_xlabel('MoK⍺', fontsize=36)
-    ax[0].set_ylabel('MoKβ', fontsize=36)
+    ax[0].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
+    ax[0].set_ylabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
     cbar = plt.colorbar(im, ax=ax[0])
     cbar.ax.tick_params(labelsize=18) 
 
@@ -307,8 +316,8 @@ def show_all_maps(
     ax[1].set_ylim(p_lim)
     ax[1].grid(True)
     ax[1].tick_params(labelsize=22)
-    ax[1].set_xlabel('MoK⍺', fontsize=36)
-    ax[1].set_ylabel('Poly', fontsize=36)
+    ax[1].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
+    ax[1].set_ylabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
     cbar = plt.colorbar(im, ax=ax[1])
     cbar.ax.tick_params(labelsize=18) 
 
@@ -317,13 +326,38 @@ def show_all_maps(
     ax[2].set_ylim(p_lim)
     ax[2].grid(True)
     ax[2].tick_params(labelsize=22)
-    ax[2].set_xlabel('MoKβ', fontsize=36)
-    ax[2].set_ylabel('Poly', fontsize=36)
+    ax[2].set_xlabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
+    ax[2].set_ylabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
     cbar = plt.colorbar(im, ax=ax[2])
     cbar.ax.tick_params(labelsize=18) 
     
     plt.show()
-    # return ax
+
+    fig, ax = plt.subplots(1, 3, figsize=(40, 5))
+
+    # ax[0].hist(_im_a, bins=bins)
+    ax[0].hist(_im_a, bins=bins, log=True)
+    ax[0].set_xlim(a_lim)
+    ax[0].grid(True)
+    ax[0].tick_params(labelsize=22)
+    ax[0].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
+    ax[0].set_ylabel('Voxels', fontsize=36)
+
+    # ax[1].hist(_im_b, bins=bins)
+    ax[1].hist(_im_b, bins=bins, log=True)
+    ax[1].set_xlim(b_lim)
+    ax[1].grid(True)
+    ax[1].tick_params(labelsize=22)
+    ax[1].set_xlabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
+    
+    # ax[2].hist(_im_p, bins=bins)
+    ax[2].hist(_im_p, bins=bins, log=True)
+    ax[2].set_xlim(p_lim)
+    ax[2].grid(True)
+    ax[2].tick_params(labelsize=22)
+    ax[2].set_xlabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
+
+    plt.show()
 
 
 # %%
@@ -332,7 +366,7 @@ b_lim = [-1, 10]
 p_lim = [-.1, 5]
 
 show_all_maps(im_alpha_gf_0, im_beta_gf_0, im_poly_gf_0, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim)
-show_all_maps(im_alpha_gf_1, im_beta_gf_1, im_poly_gf_1, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim)
+show_all_maps(im_alpha_gf_1, im_beta_gf_1, im_poly_gf_1, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim, slice_number=slice(0, 199))
 
 # %%
 data_0 = {
@@ -377,8 +411,11 @@ g.map_lower(sns.scatterplot, marker='.')
 # g.map_upper(hide_current_axis)
 g.fig.legend(handles=g._legend_data.values(), labels=['Ag begenat', 'LiNbO3', 'NaCl'], bbox_to_anchor=(.85, .75))
 
-
 # %%
+begenat_text = r'AgC$_2$$_2$H$_4$$_3$O$_2$'
+niobat_text = r'LiNbO$_3$'
+salt_text = 'NaCl'
+
 def show_all_scatters(
     scatter_df, 
     a_lim=None, b_lim=None, p_lim=None, 
@@ -402,27 +439,72 @@ def show_all_scatters(
     ax[0].set_ylim(b_lim)
     ax[0].grid(True)
     ax[0].tick_params(labelsize=22)
-    ax[0].set_xlabel('MoK⍺', fontsize=36)
-    ax[0].set_ylabel('MoKβ', fontsize=36)
+    ax[0].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
+    ax[0].set_ylabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
 
     sns.scatterplot(scatter_df, x='MoKα', y='Poly', hue=hue, palette=palette, marker=marker, legend=legend, ax=ax[1])
     ax[1].set_xlim(a_lim)
     ax[1].set_ylim(p_lim)
     ax[1].grid(True)
     ax[1].tick_params(labelsize=22)
-    ax[1].set_xlabel('MoK⍺', fontsize=36)
-    ax[1].set_ylabel('Poly', fontsize=36)
+    ax[1].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
+    ax[1].set_ylabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
 
     sns.scatterplot(scatter_df, x='MoKβ', y='Poly', hue=hue, palette=palette, marker=marker, legend=legend, ax=ax[2])
     ax[2].set_xlim(b_lim)
     ax[2].set_ylim(p_lim)
     ax[2].grid(True)
     ax[2].tick_params(labelsize=22)
-    ax[2].set_xlabel('MoKβ', fontsize=36)
-    ax[2].set_ylabel('Poly', fontsize=36)
+    ax[2].set_xlabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
+    ax[2].set_ylabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
     
     handles, labels = ax[2].get_legend_handles_labels()
-    fig.legend(handles, ['Ag begenat', 'LiNbO3', 'NaCl'], loc='upper center', ncols=3, fontsize=28, markerscale=3)
+    fig.legend(handles, [begenat_text, niobat_text, salt_text], loc='upper center', ncols=3, fontsize=28, markerscale=3)
+
+    ax[0].get_legend().remove()
+    ax[1].get_legend().remove()
+    ax[2].get_legend().remove()
+    
+    plt.show()
+    
+
+def show_classification_hist_plot(
+    df,
+    bins=128,
+    a_lim=None, b_lim=None, p_lim=None, 
+    figsize=(40, 5),
+    palette=None,
+    log=False,
+):
+
+    palette = palette or {0: 'blue', 1: 'red', 2: 'green'}
+    hue='labels'
+
+    fig, ax = plt.subplots(1, 3, figsize=(40, 5))
+
+    sns.histplot(df, x='MoKα', bins=bins, hue=hue, palette=palette, ax=ax[0], log_scale=(False, log))
+    ax[0].set_xlim(a_lim)
+    ax[0].grid(True)
+    ax[0].tick_params(labelsize=22)
+    ax[0].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
+    ax[0].set_ylabel('Voxels', fontsize=36)
+
+    sns.histplot(df, x='MoKβ', bins=bins, hue=hue, palette=palette, ax=ax[1], log_scale=(False, log))
+    ax[1].set_xlim(b_lim)
+    ax[1].grid(True)
+    ax[1].tick_params(labelsize=22)
+    ax[1].set_xlabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
+    ax[1].set_ylabel('')
+    
+    sns.histplot(df, x='Poly', bins=bins, hue=hue, palette=palette, ax=ax[2], log_scale=(False, log))
+    ax[2].set_xlim(p_lim)
+    ax[2].grid(True)
+    ax[2].tick_params(labelsize=22)
+    ax[2].set_xlabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
+    ax[2].set_ylabel('')
+
+    handles = ax[2].get_legend().legend_handles
+    fig.legend(handles, [begenat_text, niobat_text, salt_text], loc='center', bbox_to_anchor=(0.5, 1), ncols=3, fontsize=28)
 
     ax[0].get_legend().remove()
     ax[1].get_legend().remove()
@@ -433,12 +515,13 @@ def show_all_scatters(
 
 # %%
 show_all_scatters(part_df_0, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim)
+show_classification_hist_plot(df_0, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim, log=True)
 
 # %%
 # data_1 = {
-#     'alpha': im_alpha_gf_1[:199, :, :].flatten(), 
-#     'beta': im_beta_gf_1[:199, :, :].flatten(), 
-#     'poly': im_poly_gf_1[:199, :, :].flatten(),
+#     'MoKα': im_alpha_gf_1[:199].flatten(), 
+#     'MoKβ': im_beta_gf_1[:199].flatten(), 
+#     'Poly': im_poly_gf_1[:199].flatten(),
 # }
 data_1 = {
     'MoKα': im_alpha_gf_1.flatten(), 
@@ -466,7 +549,7 @@ part_df_1 = df_1.iloc[rnd_indx]
 part_df_1.describe()
 
 # %%
-part_df_1['labels'] = part_df_1['labels'].map(lambda x: 0 if x == 2 else 1 if x == 0 else 2)
+part_df_1['labels'] = part_df_1['labels'].map(lambda x: 1 if x == 2 else 2 if x == 0 else 0)
 
 g = sns.PairGrid(
     part_df_1, 
@@ -482,10 +565,18 @@ g.fig.legend(
     bbox_to_anchor=(.85, .75),
 )
 
-
+# %%
+df_1['labels'] = df_1['labels'].map(lambda x: 1 if x == 2 else 2 if x == 0 else 0)
 
 # %%
 show_all_scatters(part_df_1, a_lim=a_lim, b_lim=b_lim, p_lim=p_lim)
+show_classification_hist_plot(df_1.iloc[:80*80*199], a_lim=a_lim, b_lim=b_lim, p_lim=p_lim, log=True)
+
+# %%
+np.unique(df_1.labels, return_counts=True)
+
+# %%
+np.unique(part_df_1.labels, return_counts=True)
 
 # %%
 poly_colors_0 = np.copy(labels_0)
@@ -620,7 +711,7 @@ im_colors_0 = palette[poly_colors_0_masked.astype(np.int16)+1].reshape((*images[
 
 fig, ax = plt.subplots(len(slices), 4, figsize=(12, len(slices) * 3))
 
-columns = ['Poly', 'MoK⍺', 'MoKβ', 'Segmented']
+columns = [poly_text, moka_text, mokb_text, 'Segmented']
 rows = ['I', 'II', 'III', 'IV', 'V', 'VI']
 
 for col, axis in enumerate(ax[0]):
