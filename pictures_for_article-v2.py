@@ -15,6 +15,7 @@
 
 # %%
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from matplotlib.colors import LogNorm, ListedColormap
 import numpy as np
 import scipy as sp
@@ -335,27 +336,31 @@ def show_all_maps(
 
     fig, ax = plt.subplots(1, 3, figsize=(40, 5))
 
+    log = False
     # ax[0].hist(_im_a, bins=bins)
-    ax[0].hist(_im_a, bins=bins, log=True)
+    ax[0].hist(_im_a, bins=bins, log=log)
     ax[0].set_xlim(a_lim)
     ax[0].grid(True)
     ax[0].tick_params(labelsize=22)
     ax[0].set_xlabel(f'{attenuation_text} ({moka_text})', fontsize=36)
     ax[0].set_ylabel('Voxels', fontsize=36)
+    ax[0].yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
     # ax[1].hist(_im_b, bins=bins)
-    ax[1].hist(_im_b, bins=bins, log=True)
+    ax[1].hist(_im_b, bins=bins, log=log)
     ax[1].set_xlim(b_lim)
     ax[1].grid(True)
     ax[1].tick_params(labelsize=22)
     ax[1].set_xlabel(f'{attenuation_text} ({mokb_text})', fontsize=36)
+    ax[1].yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
     
     # ax[2].hist(_im_p, bins=bins)
-    ax[2].hist(_im_p, bins=bins, log=True)
+    ax[2].hist(_im_p, bins=bins, log=log)
     ax[2].set_xlim(p_lim)
     ax[2].grid(True)
     ax[2].tick_params(labelsize=22)
     ax[2].set_xlabel(f'{attenuation_text}\n({poly_text})', fontsize=36)
+    ax[2].yaxis.set_major_formatter(mpl.ticker.StrMethodFormatter('{x:,.0f}'))
 
     plt.show()
 
