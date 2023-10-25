@@ -60,7 +60,7 @@ import json
 
 with open('input_params_grid_center_with_pr_tr.json') as f:
     d = json.load(f)
-    
+
 k_alpha_pt = np.array(d['kAlpha']['PrTrCoeff'])
 
 point_alpha = np.array([*d['kAlpha']['quad'][:2], 1])
