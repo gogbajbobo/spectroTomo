@@ -27,19 +27,34 @@ k_alpha_pt = np.array(d['kAlpha']['PrTrCoeff'])
 k_alpha_pti = np.array(d['kAlpha']['PrTrInverseCoeff'])
 
 k_beta_pt = np.array(d['kBeta']['PrTrCoeff'])
+k_beta_pti = np.array(d['kBeta']['PrTrInverseCoeff'])
+
 print(k_alpha_pt)
 print(k_beta_pt)
 
 # %%
-point_alpha = np.array([*d['kAlpha']['quad'][0:2], 1])
+k_alpha_pti /= k_alpha_pti[-1, -1]
+print(k_alpha_pti)
+
+# %%
+point_alpha = np.array([*d['kAlpha']['quad'][:2], 1])
+point_beta = np.array([*d['kBeta']['quad'][:2], 1])
 point_poly = np.array([*d['poly']['quad'][:2], 1])
 
 print(point_alpha)
+print(point_beta)
 print(point_poly)
 
 # %%
 # result = k_alpha_pt @ point_poly
-result = np.linalg.inv(k_alpha_pt) @ point_poly
+result = k_alpha_pti @ point_poly
+# result = np.linalg.inv(k_alpha_pt) @ point_poly
+# result = k_alpha_pt @ point_alpha
+
+# result = k_beta_pt @ point_poly
+# result = np.linalg.inv(k_beta_pt) @ point_poly
+# result = k_beta_pti @ point_beta
+
 result /= result[2]
 print(result)
 
